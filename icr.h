@@ -18,7 +18,7 @@ enum TipoInstruccion
     NONE
 };
 
-class IR
+class ICR
 {
 private:
     string instruccionCompleta;
