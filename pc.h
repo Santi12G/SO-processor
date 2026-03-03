@@ -9,6 +9,7 @@ private:
     int direccion;
 
 public:
+    pc();
     void aumentar();
     int enviarDir();
 };

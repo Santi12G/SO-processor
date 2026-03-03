@@ -1,11 +1,11 @@
 #include "mar.h"
 
-void mar::cargarDireccion(int nuevaDir)
+void mar::cargarDireccion(string nuevaDir)
 {
     this->direccion = nuevaDir;
 }
 
-int mar::obtenerDireccion()
+string mar::obtenerDireccion()
 {
-    return this->direccion;
+    return direccion;
 }

@@ -11,6 +11,7 @@ private:
     int datos[200];
 
 public:
+    Memoria();
     string devolverDato(int direccion);
     string escribirDato(int direccion, string dato);
 };

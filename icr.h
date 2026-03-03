@@ -27,6 +27,7 @@ private:
 public:
     void cargarInstruccion(string inst);
     TipoInstruccion obtenerTipo();
+    string obtenerInstruccion();
 };
 
 #endif

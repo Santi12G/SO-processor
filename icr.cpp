@@ -1,6 +1,11 @@
 #include "ICR.h"
 #include <sstream>
 
+string ICR::obtenerInstruccion()
+{
+    return instruccionCompleta;
+}
+
 void ICR::cargarInstruccion(string inst)
 {
     instruccionCompleta = inst;

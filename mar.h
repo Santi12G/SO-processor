@@ -8,11 +8,11 @@ using namespace std;
 class mar
 {
 private:
-    int direccion;
+    string direccion;
 
 public:
-    void cargarDireccion(int nuevaDir);
-    int obtenerDireccion();
+    void cargarDireccion(string nuevaDir);
+    string obtenerDireccion();
 };
 
 #endif
