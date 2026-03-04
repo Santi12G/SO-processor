@@ -1,6 +1,8 @@
 #include "UnidadControl.h"
 #include <iostream>
 #include <sstream>
+#include <algorithm>
+#include <cctype>
 
 UnidadControl::UnidadControl()
 {
@@ -158,32 +160,44 @@ void UnidadControl::ejecutarInstruccion(
 
     case SHW:
     {
-        string op;
+        string dummy, token;
         stringstream ss(ir.obtenerInstruccion());
-        ss >> op >> op;
+        ss >> dummy >> token; // dummy == "SHW", token == target
 
-        if (op == "ACC")
+        if (token == "ACC")
         {
             cout << acc.devolverDato() << endl;
         }
-        else if (op == "ICR")
+        else if (token == "ICR")
         {
-            string instruccion = (op.substr(1));
             cout << ir.obtenerInstruccion() << endl;
         }
-        else if (op == "MAR")
+        else if (token == "MAR")
         {
             cout << registroMAR.obtenerDireccion() << endl;
         }
-        else if (op == "MDR")
+        else if (token == "MDR")
         {
-            string dato = op.substr(1);
             cout << registroMDR.obtenerDato() << endl;
+        }
+        else if (token == "UC")
+        {
+            cout << (estaActiva() ? "ACTIVA" : "DETENIDA") << endl;
         }
         else
         {
-            int direccion = stoi(op.substr(1));
-            cout << memoria.devolverDato(direccion) << endl;
+            // Expecting memory location like D5
+            if (token.size() > 1 && token[0] == 'D' &&
+                std::all_of(token.begin() + 1, token.end(), [](unsigned char c) { return std::isdigit(c); }))
+            {
+                int direccion = stoi(token.substr(1));
+                cout << memoria.devolverDato(direccion) << endl;
+            }
+            else
+            {
+                // Unknown token: print as-is to avoid crash
+                cout << token << endl;
+            }
         }
         break;
     }
