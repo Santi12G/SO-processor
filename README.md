@@ -18,12 +18,14 @@ Manera corta de ejecución:
 
 Nota: programaX.txt indica X el programa que se quiere probar. Ej: programa1.txt
 
+Windows
 ```
 mkdir build
 cd build
 cmake ..
 cmake --build .
-.\Debug\Procesador.exe ..\programaX.txt
+cd ..
+.\build\Debug\Procesador.exe programa.txt
 ```
 Para ejecutar el programa es necesario compilar primero el proyecto utilizando **CMake**. Los pasos son los siguientes:
 
