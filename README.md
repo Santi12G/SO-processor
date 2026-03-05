@@ -15,13 +15,13 @@ what(): stoi. Ademas, cuando hace esto: SHW MAR NULL NULL NULL, el resultado es 
 ### Ejecución del programa  (explicación)
 
 Manera corta de ejecución:
-
+```
 mkdir build
 cd build
 cmake ..
 cmake --build .
 .\Debug\Procesador.exe ..\programaX.txt
-
+```
 Para ejecutar el programa es necesario compilar primero el proyecto utilizando **CMake**. Los pasos son los siguientes:
 
 1. Abrir una terminal en la carpeta raíz del proyecto.
