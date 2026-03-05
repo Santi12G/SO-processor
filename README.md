@@ -15,6 +15,9 @@ what(): stoi. Ademas, cuando hace esto: SHW MAR NULL NULL NULL, el resultado es 
 ### Ejecución del programa  (explicación)
 
 Manera corta de ejecución:
+
+Nota: programaX.txt indica X el programa que se quiere probar.
+
 ```
 mkdir build
 cd build
