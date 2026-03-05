@@ -11,7 +11,16 @@ Hacer que funcione con todas las variantes del add, y en la funcionalidad SHW: c
 what(): stoi. Ademas, cuando hace esto: SHW MAR NULL NULL NULL, el resultado es vacio entonces, esto no estaria bien, deberia devolver el valor del pc que fue la que le paso al MAR para poder traer la instruccion anterior.
 
 
-### Ejecución del programa
+
+### Ejecución del programa  (explicación)
+
+Manera corta de ejecución:
+
+mkdir build
+cd build
+cmake ..
+cmake --build .
+.\Debug\Procesador.exe ..\programaX.txt
 
 Para ejecutar el programa es necesario compilar primero el proyecto utilizando **CMake**. Los pasos son los siguientes:
 
