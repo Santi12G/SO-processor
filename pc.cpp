@@ -7,10 +7,10 @@ pc::pc()
 
 void pc::aumentar()
 {
-    this->direccion++;
+    direccion++;
 }
 
 int pc::enviarDir()
 {
-    return this->direccion;
-};
+    return direccion;
+}

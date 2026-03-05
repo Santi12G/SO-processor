@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cctype>
 
+using namespace std;
+
 UnidadControl::UnidadControl()
 {
     ejecutando = true;
@@ -32,88 +34,89 @@ void UnidadControl::ejecutarInstruccion(
 
     switch (tipo)
     {
+
     case SET:
     {
-        string nombre, op1, valor, null1, null2;
+        string nombre, op1, valor;
         stringstream ss(ir.obtenerInstruccion());
 
-        ss >> nombre >> op1 >> valor >> null1 >> null2;
+        ss >> nombre >> op1 >> valor;
 
         int direccion = stoi(op1.substr(1));
+
+        registroMAR.cargarDireccion(op1);
+        registroMDR.cargarDato(valor);
 
         memoria.escribirDato(direccion, valor);
 
         break;
     }
+
     case LDR:
     {
-        // Extraer dirección (ej: D5 → 5)
-        string op;
+        string nombre, op;
         stringstream ss(ir.obtenerInstruccion());
-        ss >> op >> op;
 
-        string direccion = op;
+        ss >> nombre >> op;
 
-        registroMAR.cargarDireccion(direccion);
+        int direccion = stoi(op.substr(1));
 
-        string dato = memoria.devolverDato(stoi(direccion.substr(1)));
+        registroMAR.cargarDireccion(op);
+
+        string dato = memoria.devolverDato(direccion);
         registroMDR.cargarDato(dato);
 
         acc.almacenarDato(stoi(dato));
+
         break;
     }
 
     case ADD:
     {
-        string instruccion = ir.obtenerInstruccion();
-        stringstream ss(instruccion);
-
         string nombre, op1, op2, op3;
+        stringstream ss(ir.obtenerInstruccion());
 
         ss >> nombre >> op1 >> op2 >> op3;
 
-        // Convertir direcciones (D1 → 1)
-        auto extraerDir = [](string op)
-        {
-            return stoi(op.substr(1));
-        };
+        auto dir = [](string op)
+        { return stoi(op.substr(1)); };
 
-        // ---- ADD D1 ----
+        // ADD D1
         if (op1 != "NULL" && op2 == "NULL")
         {
-            int dir1 = extraerDir(op1);
-            int valor1 = stoi(memoria.devolverDato(dir1));
+            int valor = stoi(memoria.devolverDato(dir(op1)));
 
-            int resultado = alu.sumar(acc.devolverDato(), valor1);
+            int resultado = alu.sumar(acc.devolverDato(), valor);
+
             acc.almacenarDato(resultado);
         }
 
-        // ---- ADD D1 D3 ----
+        // ADD D1 D2
         else if (op1 != "NULL" && op2 != "NULL" && op3 == "NULL")
         {
-            int dir1 = extraerDir(op1);
-            int dir2 = extraerDir(op2);
+            int v1 = stoi(memoria.devolverDato(dir(op1)));
+            int v2 = stoi(memoria.devolverDato(dir(op2)));
 
-            int valor1 = stoi(memoria.devolverDato(dir1));
-            int valor2 = stoi(memoria.devolverDato(dir2));
+            int resultado = alu.sumar(v1, v2);
 
-            int resultado = alu.sumar(valor1, valor2);
             acc.almacenarDato(resultado);
         }
 
-        // ---- ADD D1 D3 D4 ----
+        // ADD D1 D2 D3
         else if (op1 != "NULL" && op2 != "NULL" && op3 != "NULL")
         {
-            int dir1 = extraerDir(op1);
-            int dir2 = extraerDir(op2);
-            int dir3 = extraerDir(op3);
+            int v1 = stoi(memoria.devolverDato(dir(op1)));
+            int v2 = stoi(memoria.devolverDato(dir(op2)));
 
-            int valor1 = stoi(memoria.devolverDato(dir1));
-            int valor2 = stoi(memoria.devolverDato(dir2));
+            int resultado = alu.sumar(v1, v2);
 
-            string resultado = to_string(alu.sumar(valor1, valor2));
+            // resultado también queda en el acumulador
+            acc.almacenarDato(resultado);
 
-            memoria.escribirDato(dir3, resultado);
+            registroMAR.cargarDireccion(op3);
+            registroMDR.cargarDato(to_string(resultado));
+
+            memoria.escribirDato(dir(op3), registroMDR.obtenerDato());
         }
 
         break;
@@ -121,40 +124,68 @@ void UnidadControl::ejecutarInstruccion(
 
     case INC:
     {
-        string op;
+        string nombre, op;
         stringstream ss(ir.obtenerInstruccion());
-        ss >> op >> op;
+        ss >> nombre >> op;
 
         int direccion = stoi(op.substr(1));
-        int valor = stoi(memoria.devolverDato(direccion));
 
-        int resultado = alu.incrementar(valor);
-        memoria.escribirDato(direccion, to_string(resultado));
+        registroMAR.cargarDireccion(op);
+
+        string dato = memoria.devolverDato(direccion);
+        registroMDR.cargarDato(dato);
+
+        acc.almacenarDato(stoi(dato));
+
+        int resultado = alu.incrementar(acc.devolverDato());
+        acc.almacenarDato(resultado);
+
+        registroMDR.cargarDato(to_string(resultado));
+
+        memoria.escribirDato(direccion, registroMDR.obtenerDato());
+
         break;
     }
 
     case DEC:
     {
-        string op;
+        string nombre, op;
         stringstream ss(ir.obtenerInstruccion());
-        ss >> op >> op;
+        ss >> nombre >> op;
 
         int direccion = stoi(op.substr(1));
-        int valor = stoi(memoria.devolverDato(direccion));
 
-        int resultado = alu.decrementar(valor);
-        memoria.escribirDato(direccion, to_string(resultado));
+        registroMAR.cargarDireccion(op);
+
+        string dato = memoria.devolverDato(direccion);
+        registroMDR.cargarDato(dato);
+
+        acc.almacenarDato(stoi(dato));
+
+        int resultado = alu.decrementar(acc.devolverDato());
+        acc.almacenarDato(resultado);
+
+        registroMDR.cargarDato(to_string(resultado));
+
+        memoria.escribirDato(direccion, registroMDR.obtenerDato());
+
         break;
     }
 
     case STR:
     {
-        string op;
+        string nombre, op;
         stringstream ss(ir.obtenerInstruccion());
-        ss >> op >> op;
+
+        ss >> nombre >> op;
 
         int direccion = stoi(op.substr(1));
-        memoria.escribirDato(direccion, to_string(acc.devolverDato()));
+
+        registroMAR.cargarDireccion(op);
+        registroMDR.cargarDato(to_string(acc.devolverDato()));
+
+        memoria.escribirDato(direccion, registroMDR.obtenerDato());
+
         break;
     }
 
@@ -162,45 +193,44 @@ void UnidadControl::ejecutarInstruccion(
     {
         string dummy, token;
         stringstream ss(ir.obtenerInstruccion());
-        ss >> dummy >> token; // dummy == "SHW", token == target
+
+        ss >> dummy >> token;
 
         if (token == "ACC")
-        {
             cout << acc.devolverDato() << endl;
-        }
+
         else if (token == "ICR")
         {
-            cout << ir.obtenerInstruccion() << endl;
+            cout << ir.obtenerInstruccionAnterior() << endl;
         }
+
         else if (token == "MAR")
-        {
             cout << registroMAR.obtenerDireccion() << endl;
-        }
+
         else if (token == "MDR")
+            cout << registroMDR.obtenerDato() << endl;
+
+        else if (token == "UC")
+            cout << (estaActiva() ? "ACTIVA" : "DETENIDA") << endl;
+
+        else if (token[0] == 'D')
         {
+            int direccion = stoi(token.substr(1));
+
+            // MAR ← dirección
+            registroMAR.cargarDireccion(token);
+
+            // MDR ← Mem[MAR]
+            string dato = memoria.devolverDato(direccion);
+            registroMDR.cargarDato(dato);
+
+            // mostrar dato
             cout << registroMDR.obtenerDato() << endl;
         }
-        else if (token == "UC")
-        {
-            cout << (estaActiva() ? "ACTIVA" : "DETENIDA") << endl;
-        }
-        else
-        {
-            // Expecting memory location like D5
-            if (token.size() > 1 && token[0] == 'D' &&
-                std::all_of(token.begin() + 1, token.end(), [](unsigned char c) { return std::isdigit(c); }))
-            {
-                int direccion = stoi(token.substr(1));
-                cout << memoria.devolverDato(direccion) << endl;
-            }
-            else
-            {
-                // Unknown token: print as-is to avoid crash
-                cout << token << endl;
-            }
-        }
+
         break;
     }
+
     case PAUSE:
     {
         cout << "Procesador en pausa. Presione ENTER para continuar...";
@@ -215,6 +245,4 @@ void UnidadControl::ejecutarInstruccion(
     default:
         break;
     }
-
-    contadorPrograma.aumentar();
 }

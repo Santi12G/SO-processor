@@ -22,12 +22,14 @@ class ICR
 {
 private:
     string instruccionCompleta;
+    string instruccionAnterior;
     TipoInstruccion tipo;
 
 public:
     void cargarInstruccion(string inst);
     TipoInstruccion obtenerTipo();
     string obtenerInstruccion();
+    string obtenerInstruccionAnterior();
 };
 
 #endif

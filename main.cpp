@@ -15,9 +15,8 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 {
-    // ===== Crear componentes del procesador =====
     pc contadorPrograma;
     ICR ir;
     ALU alu;
@@ -27,8 +26,13 @@ int main()
     Memoria memoria;
     UnidadControl uc;
 
-    // ===== Leer archivo =====
-    ifstream archivo("programa.txt");
+    if (argc < 2)
+    {
+        cout << "Uso: Procesador <archivo.txt>" << endl;
+        return 1;
+    }
+
+    ifstream archivo(argv[1]);
 
     if (!archivo)
     {
@@ -47,35 +51,20 @@ int main()
 
     archivo.close();
 
-    // ===== Ciclo FETCH - DECODE - EXECUTE =====
+    // ===== FETCH INICIAL =====
+    int pcActual = contadorPrograma.enviarDir();
+
+    string direccion = "D" + to_string(pcActual);
+    registroMAR.cargarDireccion(direccion);
+
+    string instruccion = instrucciones[pcActual];
+    registroMDR.cargarDato(instruccion);
+
+    ir.cargarInstruccion(instruccion);
+
     while (uc.estaActiva())
     {
-        int pcActual = contadorPrograma.enviarDir();
-
-        if (pcActual >= instrucciones.size())
-            break;
-
-        string instruccion = instrucciones[pcActual];
-
-        // ===== DECODE =====
-        ir.cargarInstruccion(instruccion);
-
-        // ===== Caso especial: SET =====
-        if (ir.obtenerTipo() == SET)
-        {
-            string op, direccionStr, valorStr;
-            stringstream ss(instruccion);
-
-            ss >> op >> direccionStr >> valorStr;
-
-            int direccion = stoi(direccionStr.substr(1));
-            memoria.escribirDato(direccion, valorStr);
-
-            contadorPrograma.aumentar();
-            continue;
-        }
-
-        // ===== EXECUTE (resto instrucciones) =====
+        // ===== EXECUTE =====
         uc.ejecutarInstruccion(
             ir,
             alu,
@@ -84,6 +73,25 @@ int main()
             registroMDR,
             memoria,
             contadorPrograma);
+
+        // ===== NEXT INSTRUCTION =====
+        contadorPrograma.aumentar();
+
+        int pcActual = contadorPrograma.enviarDir();
+
+        if (pcActual >= instrucciones.size())
+            break;
+
+        // MAR ← PC
+        string direccion = "D" + to_string(pcActual);
+        registroMAR.cargarDireccion(direccion);
+
+        // ===== FETCH =====
+        string instruccion = instrucciones[pcActual];
+
+        registroMDR.cargarDato(instruccion);
+
+        ir.cargarInstruccion(instruccion);
     }
 
     cout << "Programa finalizado." << endl;

@@ -8,6 +8,7 @@ string ICR::obtenerInstruccion()
 
 void ICR::cargarInstruccion(string inst)
 {
+    instruccionAnterior = instruccionCompleta;
     instruccionCompleta = inst;
 
     stringstream ss(inst);
@@ -60,4 +61,9 @@ void ICR::cargarInstruccion(string inst)
 TipoInstruccion ICR::obtenerTipo()
 {
     return tipo;
+}
+
+string ICR::obtenerInstruccionAnterior()
+{
+    return instruccionAnterior;
 }
