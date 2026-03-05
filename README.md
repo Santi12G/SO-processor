@@ -12,9 +12,22 @@ what(): stoi. Ademas, cuando hace esto: SHW MAR NULL NULL NULL, el resultado es 
 
 
 
-### Ejecución del programa  (explicación)
+### Ejecución del programa  
 
-Manera corta de ejecución:
+Manera rapida:
+
+```
+.\Procesador.exe programa.txt
+
+```
+
+
+
+---
+
+
+
+Manera corta de ejecución con cmake:
 
 Nota: programaX.txt indica X el programa que se quiere probar. Ej: programa1.txt
 
